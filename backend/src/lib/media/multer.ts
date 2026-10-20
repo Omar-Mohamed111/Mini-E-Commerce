@@ -3,14 +3,15 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-// // path Upload
+// Upload directory
 const uploadDirectory = path.resolve("uploads");
 
-// Create uploads directory automatically if it doesn't exist
-fs.mkdirSync(uploadDirectory, { recursive: true });
+// Create uploads directory only in local development
+if (!process.env.VERCEL) {
+  fs.mkdirSync(uploadDirectory, { recursive: true });
+}
 
 const multerUpload = (allowedTypes: string[] = ["image/png", "image/jpeg"]) => {
-  
   return multer({
     storage: multer.diskStorage({
       destination: (_req, _file, cb) => {
