@@ -31,3 +31,7 @@ export const env = {
   jwtSecret: result.data.JWT_SECRET,
   redisUrl: result.data.REDIS_URL,
 };
+
+
+console.log("MONGO_URI exists:", Boolean(process.env.MONGO_URI));
+console.log("MONGO_URI starts with mongodb:", /^mongodb(\+srv)?:\/\//.test(process.env.MONGO_URI ?? ""));
