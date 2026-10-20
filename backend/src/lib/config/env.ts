@@ -8,6 +8,7 @@ const envSchema = z.object({
   EMAIL_USER: z.string().email(),
   EMAIL_PASS: z.string().min(1),
   JWT_SECRET: z.string().min(32),
+  REDIS_URL: z.string(),
 });
 
 const result = envSchema.safeParse(process.env);
@@ -28,4 +29,5 @@ export const env = {
     pass: result.data.EMAIL_PASS,
   },
   jwtSecret: result.data.JWT_SECRET,
+  redisUrl: result.data.REDIS_URL,
 };
