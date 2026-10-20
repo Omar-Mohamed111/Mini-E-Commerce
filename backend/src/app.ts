@@ -7,6 +7,9 @@ import cookieParser from "cookie-parser";
 import cartRouter from "./app/cart/cart.route.js";
 import ordersRoute from "./app/orders/order.route.js";
 import { correlationId } from "./middleware/correlationId.js";
+import { connectDatabase } from "./lib/database/connection.js";
+import mongoose from "mongoose";
+
 
 const app = express();
 app.use(correlationId);
@@ -16,6 +19,26 @@ app.use("/uploads", express.static("uploads"));
 app.use(cookieParser());
 
 // =========================================================================
+
+let dbConnectionPromise: Promise<unknown> | null = null;
+
+app.use(async (_req, _res, next) => {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      dbConnectionPromise ??= connectDatabase().catch((error) => {
+        dbConnectionPromise = null;
+        throw error;
+      });
+
+      await dbConnectionPromise;
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 app.use("/products", prductsRoute);
 
@@ -35,4 +58,3 @@ app.use((req, res, _next) => {
 app.use(globalError);
 
 export default app;
-  
